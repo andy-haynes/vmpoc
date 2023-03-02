@@ -1,70 +1,24 @@
-# Getting Started with Create React App
+# Sandboxed iframe PoC
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is an demo implementation for an alternative way of sandboxing
+user-submitted JSX built with create-react-app (`npm run start` to run).
 
-## Available Scripts
+The high-level approach is:
+- user submits a JSX body
+- we transpile the JSX
+- the transpiled JSX gets `eval`'d into a function body by way of the `Function` constructor
+- the `eval`'d function is rendered inside a sandboxed `iframe` with `<script>` tags to import Babel, React, and NAJ
+- parent and child scopes communicate via message passing (e.g. user code requests a transaction be signed by the parent scope who sends a message back upon completion)
 
-In the project directory, you can run:
+In this demo, pressing the `send money` button sends 10yN
+to the input account from the hardcoded `gornt.testnet` account
+and the UI refreshes upon receiving the `moneySent` message.
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+To update the code running in the `iframe`, edit the contents
+of `WidgetWrapper`. The function declaration is only used for ease
+of prototyping, only the body is used to match the current functionality
+in Near Social. Note that at the moment this component
+does not contain any JSX to keep the prototype simple; in
+a real implementation the transpilation would happen as
+part of a pipeline to validate, sanitize, and translate
+user-submitted code.
