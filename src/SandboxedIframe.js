@@ -27,6 +27,7 @@ function buildSandboxedWidget(code) {
 export function SandboxedIframe({ jsxBody }) {
     return (
         <iframe
+            className='sandboxed-iframe'
             csp={[
                 "default-src 'self'",
                 "connect-src https://rpc.near.org https://rpc.testnet.near.org",
@@ -35,7 +36,6 @@ export function SandboxedIframe({ jsxBody }) {
                 '',
             ].join('; ')}
             height={300}
-            id='sandboxed-iframe'
             sandbox='allow-scripts'
             srcDoc={buildSandboxedWidget(jsxBody)}
             title='code-container'

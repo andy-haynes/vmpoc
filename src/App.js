@@ -35,10 +35,9 @@ function App({ jsxBody }) {
                 const data = JSON.parse(event.data);
                 if (data.type === 'sendMoney') {
                     await sendNear({ accountId: data.accountId, amount: data.amount });
-                    document
-                        .getElementById('sandboxed-iframe')
-                        .contentWindow
-                        .postMessage(JSON.stringify({ type: 'moneySent' }), '*');
+                    for (const { contentWindow } of document.getElementsByClassName('sandboxed-iframe')) {
+                        contentWindow.postMessage(JSON.stringify({ type: 'moneySent' }), '*');
+                    }
                 }
             } catch { }
         });
@@ -47,7 +46,8 @@ function App({ jsxBody }) {
     return (
         <div className="App">
             <header className="App-header">
-                <SandboxedIframe jsxBody={jsxBody} />
+                <SandboxedIframe key={1} jsxBody={jsxBody} />
+                <SandboxedIframe key={2} jsxBody={jsxBody} />
             </header>
         </div>
     );
