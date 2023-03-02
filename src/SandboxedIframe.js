@@ -11,12 +11,12 @@ function buildSandboxedWidget(code) {
                 <div id="app"></div>
                 <script type="text/jsx">
                     (function () {
-                        const Sanboxed = Function('', \`
+                        const Sandboxed = Function('', \`
                             "use strict";
                             ${code}
                         \`);
                         ReactDOM.createRoot(document.getElementById('app'))
-                            .render(<Sanboxed />);
+                            .render(<Sandboxed />);
                     }())
                 </script>
             </body>
