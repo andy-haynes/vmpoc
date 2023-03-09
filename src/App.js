@@ -54,7 +54,6 @@ function App({ jsxBody }) {
         <div className="App">
             <header className="App-header">
                 <SandboxedIframe key={1} jsxBody={jsxBody} />
-                <SandboxedIframe key={2} jsxBody={jsxBody} />
             </header>
         </div>
     );
