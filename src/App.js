@@ -30,7 +30,7 @@ function App({ jsxBody }) {
         }
         setLocalStorageSecret();
 
-        window.addEventListener('message', async (event) => {
+        async function processEvent(event) {
             try {
                 if (typeof event.data !== 'string') {
                     return;
@@ -47,7 +47,10 @@ function App({ jsxBody }) {
             } catch (e) {
                 console.error(e);
             }
-        });
+        }
+
+        window.addEventListener('message', processEvent);
+        return () => window.removeEventListener('message', processEvent);
     }, []);
 
     return (
