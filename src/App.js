@@ -14,14 +14,14 @@ function App({ jsxBody }) {
     const keyStore = new InMemoryKeyStore();
     keyStore.setKey('testnet', 'gornt.testnet', KeyPair.fromString('ed25519:wRxr4RLhPk8NLSTPY5SXs9Txwu6dTsGk6XeybivzuDBfLkWL8SNxuCXCFKjqfzGCmzCxJ6qHEv7KizVmDjXYtY6'));
 
-    async function sendNear({ accountId, amount }) {
+    async function sendNear({ senderId, recipientId, amount }) {
         const account = new Account(Connection.fromConfig({
             networkId: 'testnet',
             provider: { type: 'JsonRpcProvider', args: { url: 'https://rpc.testnet.near.org' } },
             signer: { type: 'InMemorySigner', keyStore },
-        }), 'gornt.testnet');
+        }), senderId);
 
-        await account.sendMoney(accountId, amount);
+        await account.sendMoney(recipientId, amount);
     }
 
     useEffect(() => {
@@ -32,14 +32,21 @@ function App({ jsxBody }) {
 
         window.addEventListener('message', async (event) => {
             try {
+                if (typeof event.data !== 'string') {
+                    return;
+                }
+
                 const data = JSON.parse(event.data);
+                console.log('outer window received message', { event, data });
                 if (data.type === 'sendMoney') {
-                    await sendNear({ accountId: data.accountId, amount: data.amount });
+                    await sendNear(data);
                     for (const { contentWindow } of document.getElementsByClassName('sandboxed-iframe')) {
-                        contentWindow.postMessage(JSON.stringify({ type: 'moneySent' }), '*');
+                        contentWindow.postMessage(JSON.stringify({ type: 'moneySent', id: data.id }), '*');
                     }
                 }
-            } catch { }
+            } catch (e) {
+                console.error(e);
+            }
         });
     }, []);
 
